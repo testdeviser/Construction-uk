@@ -554,8 +554,8 @@ p { margin: 0 0 16px; color: var(--muted); }
   border-radius: 24px;
   background: rgba(255,255,255,.1);
   border: 1px solid rgba(255,255,255,.22);
-  backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
   box-shadow: 0 30px 60px rgba(0,0,0,.25);
 }
 .hero-card__step {
@@ -737,8 +737,8 @@ p { margin: 0 0 16px; color: var(--muted); }
   font-weight: 700;
   color: var(--white);
   background: rgba(31,31,31,.55);
-  backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   border: 1px solid rgba(255,255,255,.25);
   border-radius: 999px;
 }
@@ -861,8 +861,8 @@ p { margin: 0 0 16px; color: var(--muted); }
   border-radius: 16px;
   background: rgba(255,255,255,.14);
   border: 1px solid rgba(255,255,255,.25);
-  backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   transition: background .4s var(--ease), border-color .4s var(--ease), left .6s var(--ease);
 }
 .svc__icon svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
@@ -1948,8 +1948,8 @@ main > section:not(.hero),
   color: var(--white);
   background: rgba(255,255,255,.1);
   border: 1px solid rgba(255,255,255,.22);
-  backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
   box-shadow: 0 30px 60px rgba(0,0,0,.25);
   border-radius: 24px;
 }
@@ -2987,7 +2987,7 @@ a.copt:hover .copt__go { background: var(--charcoal); border-color: var(--charco
   display: inline-grid; place-items: center; height: 30px; padding: 0 12px; border-radius: 999px;
   font-size: 13px; font-weight: 800; letter-spacing: .04em; color: var(--white);
   background: rgba(20,20,20,.35); border: 1px solid rgba(255,255,255,.25);
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
   transition: background .3s var(--ease), border-color .3s var(--ease);
 }
 .scard:hover .scard__num { background: var(--accent); border-color: var(--accent); }
@@ -3144,7 +3144,7 @@ a.copt:hover .copt__go { background: var(--charcoal); border-color: var(--charco
   padding: 7px 16px 7px 7px; border-radius: 999px;
   font-size: 14px; font-weight: 700; color: var(--white);
   background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3);
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
 }
 .ocard__chip b {
   display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
