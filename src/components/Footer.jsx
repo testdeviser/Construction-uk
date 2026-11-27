@@ -53,7 +53,7 @@ export default function Footer() {
           <Reveal className="footer__col" d={2}>
             <h4>Our Services</h4>
             <ul className="flinks">
-              {services.map((s, i) => <FLink key={s.title} href="#services" label={s.title} onClick={currentPage === 'home' ? () => openService(i) : undefined} />)}
+              {services.map((s, i) => <FLink key={s.title} href={s.href || '#services'} label={s.title} onClick={!s.href && currentPage === 'home' ? () => openService(i) : undefined} />)}
             </ul>
           </Reveal>
 
@@ -76,7 +76,6 @@ export default function Footer() {
             <ul>
               <li><a href="#">Privacy Policy</a></li>
               <li><a href="#">Terms &amp; Conditions</a></li>
-              <li><a href="#">Cookie Policy</a></li>
             </ul>
           </div>
         </div>

@@ -6,6 +6,11 @@ import HomePage from './views/HomePage';
 import AboutPage from './views/AboutPage';
 import ProjectsPage from './views/ProjectsPage';
 import ContactPage from './views/ContactPage';
+import ServicePage from './views/ServicePage';
+import { pages } from './pages';
+
+// Service pages are listed in pages.js with a `slug` (content in servicePages, data/site.jsx)
+const servicePagesList = pages.filter((p) => p.slug);
 
 /* Site layout: topbar, header and footer stay on screen; the page in <main> changes with the URL.
    URLs and tab titles live in src/pages.js – add a page there and here. */
@@ -24,6 +29,9 @@ export default function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          {servicePagesList.map((p) => (
+            <Route key={p.path} path={p.path} element={<ServicePage slug={p.slug} />} />
+          ))}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

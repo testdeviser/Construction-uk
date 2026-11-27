@@ -1,6 +1,7 @@
 /* =========================================================
-   Custom 3-step quote form (used in the Hero and the Final CTA).
-   Front-end only: connect `submitEnquiry` to a backend / email service later.
+   Custom 3-step quote form (homepage hero + final CTA, Contact page).
+   Sends to our own PHP mailer: public/send-enquiry.php (the recipient
+   email address is set there, on the server – not in this code).
    ========================================================= */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { services } from '../data/site';
@@ -20,10 +21,30 @@ const errorFor = (name, value) => (rules[name] ? rules[name](value.trim()) : '')
 
 const empty = { service: '', name: '', phone: '', email: '', postcode: '', message: '' };
 
-/* TODO: replace with a real request (fetch to your API, EmailJS, Formspree, etc.) */
+// The mailer sits next to the site (e.g. /design/construction-uk/send-enquiry.php)
+const ENDPOINT = import.meta.env.BASE_URL + 'send-enquiry.php';
+const SEND_ERROR = "Sorry, we couldn't send your enquiry right now. Please try again or call us.";
+
+/* Send the enquiry. Throws an Error (with a message for the visitor) if it fails. */
 async function submitEnquiry(data) {
-  await new Promise((r) => setTimeout(r, prefersReducedMotion() ? 0 : 900));
-  return data;
+  // `npm run dev` has no PHP, so pretend it worked there
+  if (import.meta.env.DEV) {
+    console.info('[dev] Enquiry not sent – the PHP mailer only runs on the live server.', data);
+    await new Promise((r) => setTimeout(r, prefersReducedMotion() ? 0 : 900));
+    return;
+  }
+  let res, json = null;
+  try {
+    res = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ ...data, page: window.location.href }),
+    });
+    json = await res.json();
+  } catch {
+    throw new Error(SEND_ERROR);   // offline, server down, or the server didn't run PHP
+  }
+  if (!res.ok || !json?.ok) throw new Error(json?.error || SEND_ERROR);
 }
 
 export default function QuoteForm({ idPrefix, title, titleAs: Title = 'h2', className, formRef, ...rest }) {
@@ -34,6 +55,8 @@ export default function QuoteForm({ idPrefix, title, titleAs: Title = 'h2', clas
   const [serviceError, setServiceError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [sendError, setSendError] = useState('');
+  const honeypotRef = useRef(null);   // hidden field – only bots fill it in
 
   const viewportRef = useRef(null);
   const stepRefs = useRef([]);
@@ -123,10 +146,25 @@ export default function QuoteForm({ idPrefix, title, titleAs: Title = 'h2', clas
     if (!values.service) { go(0); setServiceError(true); return; }
     const allOk = ['name', 'phone', 'email'].map((k) => check(k, values[k], true)).every(Boolean);
     if (!allOk) { go(1); return; }
+    if (loading) return;
+    setSendError('');
     setLoading(true);
-    await submitEnquiry(values);
-    setLoading(false);
-    setDone(true);
+    try {
+      await submitEnquiry({
+        service: values.service,
+        name: values.name.trim(),
+        phone: values.phone.trim(),
+        email: values.email.trim(),
+        postcode: values.postcode.trim(),
+        message: values.message.trim(),
+        website: honeypotRef.current?.value || '',
+      });
+      setDone(true);
+    } catch (err) {
+      setSendError(err.message || SEND_ERROR);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { if (done) doneRef.current?.focus(); }, [done]);
@@ -237,10 +275,15 @@ export default function QuoteForm({ idPrefix, title, titleAs: Title = 'h2', clas
               <label htmlFor={`${idPrefix}-message`}>Project Details</label>
               <span className="field__count"><b>{values.message.length}</b>/{MAX_MSG}</span>
             </div>
-            <p className="form__msg"></p>
+            {/* Honeypot: hidden from people and screen readers; bots that fill it in are ignored by the mailer */}
+            <div className="form__hp" aria-hidden="true">
+              <label htmlFor={`${idPrefix}-website`}>Website</label>
+              <input ref={honeypotRef} type="text" id={`${idPrefix}-website`} name="website" tabIndex={-1} autoComplete="off" defaultValue="" />
+            </div>
+            <p className="form__msg form__msg--send" role="alert">{sendError}</p>
             <div className="form__nav">
               <button type="button" className="btn btn--ghost" onClick={() => go(1)}><ArrowLeft /> Back</button>
-              <button type="submit" className={cx('btn btn--primary form__submit', loading && 'is-loading')}><span>Send Enquiry</span> <ArrowRight /></button>
+              <button type="submit" className={cx('btn btn--primary form__submit', loading && 'is-loading')} disabled={loading} aria-busy={loading}><span>{loading ? 'Sending' : 'Send Enquiry'}</span> <ArrowRight /></button>
             </div>
           </fieldset>
 
@@ -249,7 +292,7 @@ export default function QuoteForm({ idPrefix, title, titleAs: Title = 'h2', clas
 
       <div className="form__done" hidden={!done} tabIndex={-1} ref={doneRef}>
         <span className="form__check" aria-hidden="true"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24" /><path d="M15 27l7.5 7.5L38 19" /></svg></span>
-        <p>{done ? 'Thank you – your enquiry is ready to send. (Form submission to be connected.)' : ''}</p>
+        <p>{done ? "Thank you – your enquiry has been sent. We'll be in touch to discuss your project." : ''}</p>
       </div>
     </form>
   );

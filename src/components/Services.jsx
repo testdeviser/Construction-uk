@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { services } from '../data/site';
 import { ArrowRight, Ico } from './Icons';
-import { Img, Reveal, cx, useServices } from './common';
+import { A, Img, Reveal, cx, useServices } from './common';
 import { prefersReducedMotion } from '../hooks';
 
 export default function Services() {
@@ -72,7 +72,7 @@ export default function Services() {
                 <h3 className="svc__title">{s.title}</h3>
                 <p>{s.text}</p>
                 <ul className="svc__tags">{s.tags.map((t) => <li key={t}>{t}</li>)}</ul>
-                <a href="#" className="svc__link">Learn More <span><ArrowRight /></span></a>
+                <A href={s.href || '#'} className="svc__link">Learn More <span><ArrowRight /></span></A>
               </div>
             </Reveal>
           ))}

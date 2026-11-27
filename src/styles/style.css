@@ -306,6 +306,21 @@ section#services, section#promo, section#projects, section#process, section#faqs
 
 .dropdown a:hover::after { opacity: 1; transform: translateX(0); }
 
+/* desktop: after choosing a service, keep the dropdown closed until the pointer leaves "Services" */
+@media (min-width: 1101px) {
+  .has-dropdown.is-suppressed .dropdown { opacity: 0; visibility: hidden; transform: translateY(10px); }
+  .has-dropdown.is-suppressed .nav__caret { transform: none; }
+}
+
+/* the service page that's currently open */
+.dropdown a.is-active {
+  background: #fbe9e2;
+  color: var(--accent);
+  font-weight: 700;
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.dropdown a.is-active::after { opacity: 1; transform: translateX(0); }
+
 /* Buttons */
 .btn {
   display: inline-flex;
@@ -1801,6 +1816,12 @@ a.contact-card:hover .contact-card__go { opacity: 1; transform: none; }
 .form__msg { margin: 0; font-size: 14px; font-weight: 600; color: #d22f2f; }
 .form__msg:empty { display: none; }
 .form__msg:not(:empty) { margin: -4px 0 10px; }
+/* "couldn't send" message – also shown in the hero form, where other messages are hidden */
+.form__msg--send:not(:empty) { margin: 4px 0 12px; padding: 10px 14px; border-radius: 10px; background: #fff1ef; }
+.form--hero .form__msg--send:not(:empty) { display: block; color: #ffd2cb; background: rgba(210,47,47,.22); }
+/* spam trap: kept off-screen, never seen by visitors */
+.form__hp { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+.form__submit:disabled { cursor: progress; }
 
 .form__done { display: grid; justify-items: center; align-content: center; gap: 18px; min-height: 420px; text-align: center; padding: 20px; outline: none; }
 .form__done[hidden] { display: none; }
@@ -2957,3 +2978,191 @@ main > section.faqs:last-child { margin-bottom: var(--gutter); } /* …and keep 
   .scard__icon { width: 54px; height: 54px; margin-top: -27px; border-radius: 16px; }
   .scard__icon svg { width: 23px; height: 23px; }
 }
+
+/* =========================================================
+   SERVICE PAGES (/services/<slug>)
+   Reuses .page-hero, the .about collage, .wcard, the process timeline, FAQs,
+   service cards and the CTA box. Adds: checklist, sub-service cards.
+   ========================================================= */
+.process + .faqs { margin-top: var(--gutter); }   /* two cards in a row: keep them apart */
+/* plain section straight before the closing CTA box: its own bottom padding is enough */
+.svc-cards + .final-cta, .testimonials + .final-cta { padding-top: 0; }
+
+/* "Our Other Services" (5 cards): centre the last row instead of leaving a gap */
+@media (min-width: 1101px) {
+  #other-services .svc-cards__grid { grid-template-columns: repeat(6, 1fr); }
+  #other-services .scard { grid-column: span 2; }
+  #other-services .scard:nth-child(4):nth-last-child(2) { grid-column: 2 / span 2; }
+}
+@media (min-width: 761px) and (max-width: 1100px) {
+  #other-services .scard:last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; width: calc(50% - 10px); }
+}
+
+/* ---------- overview: centred intro, no image ---------- */
+.svc-intro { position: relative; overflow: hidden; isolation: isolate; text-align: center; }
+.svc-intro::before { /* faint blueprint grid with a warm glow behind the heading */
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(560px 320px at 50% 30%, rgba(232,87,42,.10), transparent 70%),
+    linear-gradient(rgba(31,31,31,.045) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(90deg, rgba(31,31,31,.045) 1px, transparent 1px) 0 0 / 48px 48px;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+          mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+}
+.svc-intro__dots { /* dotted orange corners, as beside the homepage collage */
+  position: absolute; z-index: -1; width: 150px; height: 150px; border-radius: 20px; pointer-events: none;
+  background: radial-gradient(var(--accent) 2px, transparent 2.5px) 0 0 / 16px 16px; opacity: .3;
+}
+.svc-intro__dots--tl { top: 48px; left: 4%; }
+.svc-intro__dots--br { bottom: 48px; right: 4%; }
+
+.svc-intro__inner { display: flex; flex-direction: column; align-items: center; }
+.svc-intro .h2 { max-width: 760px; }
+.svc-intro__lead { max-width: 760px; margin: 0 0 14px; font-size: 19px; line-height: 1.6; color: var(--ink); }
+.svc-intro__text { max-width: 680px; margin: 0; font-size: 16px; }
+
+.svc-intro__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 28px; margin-top: 36px; }
+.svc-intro__actions .about__call { text-align: left; }
+
+@media (max-width: 1100px) {
+  .svc-intro__dots { width: 110px; height: 110px; }
+}
+@media (max-width: 760px) {
+  .svc-intro__lead { font-size: 17px; }
+  .svc-intro__text { font-size: 15px; }
+  .svc-intro__dots--tl { top: 24px; left: -20px; }
+  .svc-intro__dots--br { bottom: 24px; right: -20px; }
+}
+@media (max-width: 560px) {
+  .svc-intro__actions { gap: 18px; }
+  .svc-intro__actions .btn { width: 100%; }
+}
+
+/* ticked list */
+.checklist { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; margin: 24px 0 0; padding: 0; list-style: none; }
+.checklist li { display: flex; align-items: flex-start; gap: 10px; font-size: 15px; font-weight: 700; line-height: 1.4; color: var(--charcoal); }
+.checklist__tick { flex: none; display: grid; place-items: center; width: 22px; height: 22px; margin-top: -1px; border-radius: 50%; background: var(--accent); color: var(--white); }
+.checklist__tick svg { width: 13px; height: 13px; }
+.checklist--compact { grid-template-columns: 1fr; gap: 10px; margin: 0 0 26px; }
+.checklist--compact li { font-weight: 600; }
+.checklist--compact .checklist__tick { background: #fbe9e2; color: var(--accent); }
+
+/* ---------- what we offer: horizontal sub-service cards (photo | details, alternating) ---------- */
+.offer { background: var(--white); border-radius: 28px; }
+.offer__list { display: grid; gap: 28px; }
+.ocard {
+  position: relative; overflow: hidden; isolation: isolate;
+  display: grid; grid-template-columns: 1.05fr 1fr; align-items: stretch;
+  min-height: 460px;
+  border-radius: 26px; background: var(--warm-white); border: 1px solid var(--line);
+  transition: opacity .8s var(--ease), transform .8s var(--ease), translate .4s var(--ease), box-shadow .4s var(--ease), border-color .4s var(--ease);
+}
+.ocard:nth-child(even) { grid-template-columns: 1fr 1.05fr; }
+.ocard:nth-child(even) .ocard__media { order: 2; }
+.ocard::after { /* orange line that grows along the bottom on hover */
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; height: 4px;
+  background: linear-gradient(90deg, var(--accent), #ff9466); transform: scaleX(0); transform-origin: left;
+  transition: transform .6s var(--ease);
+}
+.ocard:hover { translate: 0 -6px; border-color: transparent; box-shadow: 0 30px 60px rgba(31,31,31,.12); }
+.ocard:hover::after { transform: scaleX(1); }
+
+/* photo side */
+.ocard__media { position: relative; min-height: 100%; }
+.ocard__media::after { display: none; }
+.ocard__media img { transition: transform 1s var(--ease); }
+.ocard:hover .ocard__media img { transform: scale(1.06); }
+.ocard__media::before { /* soft shade so the chip stays readable */
+  content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(180deg, rgba(20,20,20,0) 55%, rgba(20,20,20,.55) 100%);
+}
+.ocard__chip { /* glass label on the photo */
+  position: absolute; left: 22px; bottom: 22px; z-index: 3;
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 7px 16px 7px 7px; border-radius: 999px;
+  font-size: 14px; font-weight: 700; color: var(--white);
+  background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.ocard__chip b {
+  display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+  font-size: 12px; font-weight: 800; background: var(--accent);
+}
+
+/* details side */
+.ocard__body { position: relative; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: 52px 52px 50px; }
+.ocard__ghost { /* big outlined number, as on the process cards */
+  position: absolute; top: 18px; right: 32px; z-index: -1; pointer-events: none;
+  font-size: 150px; font-weight: 800; line-height: 1; letter-spacing: -.05em;
+  color: transparent; -webkit-text-stroke: 1.5px rgba(232,87,42,.18);
+  transition: -webkit-text-stroke-color .45s var(--ease), transform .6s var(--ease);
+}
+.ocard:hover .ocard__ghost { -webkit-text-stroke-color: rgba(232,87,42,.35); transform: translateY(6px); }
+.ocard__icon {
+  display: grid; place-items: center; width: 62px; height: 62px; border-radius: 18px;
+  background: var(--accent); color: var(--white); box-shadow: 0 12px 24px rgba(232,87,42,.28);
+  transition: transform .45s var(--ease);
+}
+.ocard__icon svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ocard:hover .ocard__icon { transform: rotate(-8deg) scale(1.05); }
+.ocard__title { margin: 24px 0 12px; font-size: 32px; font-weight: 800; letter-spacing: -.025em; line-height: 1.15; color: var(--charcoal); }
+.ocard__text { max-width: 520px; margin: 0 0 24px; font-size: 16.5px; }
+.ocard__points { width: 100%; margin: 0 0 32px; padding-top: 24px; border-top: 1px dashed #ddd4c6; }
+.ocard__points li { font-weight: 600; }
+.ocard__points .checklist__tick { background: #fbe9e2; color: var(--accent); transition: background .3s var(--ease), color .3s var(--ease); }
+.ocard:hover .ocard__points .checklist__tick { background: var(--accent); color: var(--white); }
+.ocard__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; }
+.ocard__call { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; color: var(--charcoal); transition: color .25s var(--ease); }
+.ocard__call-icon {
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
+  border: 1.5px solid var(--line); color: var(--accent);
+  transition: background .25s var(--ease), border-color .25s var(--ease), color .25s var(--ease);
+}
+.ocard__call-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+.ocard__call:hover { color: var(--accent); }
+.ocard__call:hover .ocard__call-icon { background: var(--accent); border-color: var(--accent); color: var(--white); }
+.ocard__call:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 999px; }
+
+/* ---------- Service pages: ≤1100 tablets ---------- */
+@media (max-width: 1100px) {
+  .ocard { min-height: 0; }
+  .ocard__body { padding: 40px 36px; }
+  .ocard__title { font-size: 28px; }
+  .ocard__ghost { font-size: 120px; right: 24px; }
+  .ocard__points { grid-template-columns: 1fr; gap: 10px; }
+}
+
+/* ---------- Service pages: ≤900 – stack: photo on top ---------- */
+@media (max-width: 900px) {
+  .offer__list { gap: 20px; }
+  .ocard, .ocard:nth-child(even) { grid-template-columns: 1fr; }
+  .ocard:nth-child(even) .ocard__media { order: 0; }
+  .ocard__media { min-height: 0; height: 300px; }
+  .ocard__points { grid-template-columns: 1fr 1fr; gap: 12px 20px; }
+}
+
+/* ---------- Service pages: ≤760 large phones ---------- */
+@media (max-width: 760px) {
+  section.offer { border-radius: 22px; }
+  .ocard__media { height: 240px; }
+  .ocard__body { padding: 30px 26px 32px; }
+  .ocard__points { grid-template-columns: 1fr; gap: 10px; }
+}
+
+/* ---------- Service pages: ≤560 phones ---------- */
+@media (max-width: 560px) {
+  .checklist { grid-template-columns: 1fr; gap: 10px; }
+  .ocard { border-radius: 20px; }
+  .ocard__media { height: 210px; }
+  .ocard__chip { left: 14px; bottom: 14px; font-size: 13px; }
+  .ocard__body { padding: 26px 20px 28px; }
+  .ocard__icon { width: 54px; height: 54px; border-radius: 16px; }
+  .ocard__icon svg { width: 24px; height: 24px; }
+  .ocard__title { margin-top: 20px; font-size: 24px; }
+  .ocard__text { font-size: 15px; }
+  .ocard__ghost { font-size: 96px; top: 14px; right: 16px; }
+  .ocard__points { margin-bottom: 26px; padding-top: 20px; }
+  .ocard__actions { width: 100%; gap: 16px; }
+  .ocard__actions .btn { width: 100%; }
+}
+
