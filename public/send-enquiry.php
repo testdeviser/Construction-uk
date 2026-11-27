@@ -10,7 +10,7 @@
    ========================================================= */
 
 // ---------- Settings ----------
-$TO_EMAIL   = 'testdeviser@gmail.com';     // where enquiries are sent (temporary – change before launch)
+$TO_EMAIL   = 'devdeviser@gmail.com';     // where enquiries are sent (temporary – change before launch)
 $SITE_NAME  = 'Company Name';              // shown in the email subject / sender name
 $MAX_PER_IP = 5;                           // max enquiries per visitor…
 $WINDOW_SEC = 600;                         // …in this many seconds (10 minutes)
