@@ -28,3 +28,6 @@ dist-ssr
 .env
 .env.*
 .claude/settings.local.json
+# Quote form mailer password (created on deploy from GitHub Secrets)
+smtp-config.php
+!smtp-config.example.php

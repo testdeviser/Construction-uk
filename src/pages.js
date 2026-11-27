@@ -55,6 +55,16 @@ export const pages = [
     description: 'Keep your property in good condition with general repairs and ongoing home maintenance solutions.',
   },
   {
+    path: '/privacy-policy', page: 'privacy',
+    title: `Privacy Policy | ${SITE_TITLE}`,
+    description: 'How we collect, use and protect your personal information when you use our website or contact us about your project.',
+  },
+  {
+    path: '/terms-conditions', page: 'terms',
+    title: `Terms & Conditions | ${SITE_TITLE}`,
+    description: 'The terms that apply when you use our website and request a quote for building, renovation or property improvement work.',
+  },
+  {
     path: '/contact', page: 'contact',
     title: `Contact Us | ${SITE_TITLE}`,
     description: 'Get in touch to discuss your building, renovation or property improvement project and request a free, no-obligation quote.',

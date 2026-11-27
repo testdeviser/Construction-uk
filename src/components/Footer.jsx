@@ -74,8 +74,8 @@ export default function Footer() {
           <div className="container footer__bottom-inner">
             <p>&copy; <span>{new Date().getFullYear()}</span> {company.name}. All rights reserved.</p>
             <ul>
-              <li><a href="#">Privacy Policy</a></li>
-              <li><a href="#">Terms &amp; Conditions</a></li>
+              <li><A href="/privacy-policy" aria-current={currentPage === 'privacy' ? 'page' : undefined}>Privacy Policy</A></li>
+              <li><A href="/terms-conditions" aria-current={currentPage === 'terms' ? 'page' : undefined}>Terms &amp; Conditions</A></li>
             </ul>
           </div>
         </div>
