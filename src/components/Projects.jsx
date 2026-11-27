@@ -1,12 +1,20 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { projectFilters, projects } from '../data/site';
 import { ArrowLeft, ArrowRight, ExpandIcon } from './Icons';
-import { Img, Reveal, cx } from './common';
+import { Img, Reveal, Title, cx, quoteHref } from './common';
 import { prefersReducedMotion } from '../hooks';
 
 const matches = (f) => (p) => f === 'all' || p.cat === f;
 
-export default function Projects() {
+const defaultHead = {
+  eyebrow: 'Explore Our Work',
+  title: 'Turning Ideas Into Beautiful', accent: 'Spaces',
+  text: 'Explore how building, renovation and property improvements can transform the way a home looks, feels and functions.',
+};
+
+/* Project gallery. Homepage: default heading + "View All Projects".
+   Projects page: its own heading (`head`) and a quote button instead (`showMore={false}`). */
+export default function Projects({ head = defaultHead, showMore = true }) {
   const reduce = prefersReducedMotion();
   const [filter, setFilter] = useState('all');
   const [entering, setEntering] = useState({}); // id -> animation delay (ms)
@@ -116,9 +124,9 @@ export default function Projects() {
     <section className="section projects" id="projects">
       <div className="container">
         <div className="section-head section-head--center projects__head">
-          <Reveal as="p" className="eyebrow" d={0}>Explore Our Work</Reveal>
-          <Reveal as="h2" className="h2" d={1}>Turning Ideas Into Beautiful <em className="hl">Spaces</em></Reveal>
-          <Reveal as="p" className="section-head__text" d={2}>Explore how building, renovation and property improvements can transform the way a home looks, feels and functions.</Reveal>
+          <Reveal as="p" className="eyebrow" d={0}>{head.eyebrow}</Reveal>
+          <Reveal as="h2" className="h2" d={1}><Title text={head.title} accent={head.accent} /></Reveal>
+          <Reveal as="p" className="section-head__text" d={2}>{head.text}</Reveal>
         </div>
 
         <Reveal className="filters" role="tablist" aria-label="Project categories" d={3}>
@@ -163,9 +171,15 @@ export default function Projects() {
           })}
         </div>
 
-        <Reveal className="center projects__more">
-          <a href="#" className="btn btn--dark">View All Projects <ArrowRight /></a>
-        </Reveal>
+        {showMore ? (
+          <Reveal className="center projects__more">
+            <a href="projects.html" className="btn btn--dark">View All Projects <ArrowRight /></a>
+          </Reveal>
+        ) : (
+          <Reveal className="center projects__more">
+            <a href={quoteHref} className="btn btn--primary">Start Your Project <ArrowRight /></a>
+          </Reveal>
+        )}
       </div>
 
       {/* Custom cursor over the gallery (decorative) */}

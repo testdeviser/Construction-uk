@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { company, navLinks, services } from '../data/site';
 import { ArrowRight, LogoMark, SocialList } from './Icons';
-import { cx } from './common';
+import { cx, currentPage, pageHref, quoteHref } from './common';
 
 export function Topbar() {
   return (
@@ -29,7 +29,7 @@ export function Topbar() {
 
 export function Logo({ light }) {
   return (
-    <a href="/" className={cx('logo', light && 'logo--light')} aria-label={light ? undefined : 'Homepage'}>
+    <a href="./" className={cx('logo', light && 'logo--light')} aria-label={light ? undefined : 'Homepage'}>
       <LogoMark />
       <span className="logo__text">
         <span className="logo__name">{company.name}</span>
@@ -42,7 +42,24 @@ export function Logo({ light }) {
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false); // mobile / tablet menu
   const toggleRef = useRef(null);
+  const burgerRef = useRef(null);
+
+  // Mobile menu: lock page scroll, close on Escape or when the screen gets wide again
+  useEffect(() => {
+    document.body.classList.toggle('menu-open', menuOpen);
+    if (!menuOpen) return;
+    const onKey = (e) => { if (e.key === 'Escape') { setMenuOpen(false); burgerRef.current?.focus(); } };
+    const mq = window.matchMedia('(min-width: 1101px)');
+    const onWide = () => { if (mq.matches) setMenuOpen(false); };
+    document.addEventListener('keydown', onKey);
+    mq.addEventListener('change', onWide);
+    return () => { document.removeEventListener('keydown', onKey); mq.removeEventListener('change', onWide); };
+  }, [menuOpen]);
+
+  // Any link inside the menu closes it
+  const onNavClick = (e) => { if (e.target.closest('a')) { setMenuOpen(false); setOpen(false); } };
 
   // Sticky header shadow once the page scrolls
   useEffect(() => {
@@ -60,13 +77,13 @@ export default function Header() {
   }, []);
 
   return (
-    <header className={cx('header', scrolled && 'is-scrolled')} id="siteHeader">
+    <header className={cx('header', scrolled && 'is-scrolled', menuOpen && 'is-menu-open')} id="siteHeader">
       <div className="header__inner">
         <Logo />
 
-        <nav className="nav" aria-label="Main">
+        <nav className="nav" id="mainNav" aria-label="Main" onClick={onNavClick}>
           <ul className="nav__list">
-            {navLinks.map((link, i) =>
+            {navLinks.map((link) =>
               link.dropdown ? (
                 <li
                   key={link.label}
@@ -91,17 +108,33 @@ export default function Header() {
                 </li>
               ) : (
                 <li className="nav__item" key={link.label}>
-                  <a href={link.href} className={cx('nav__link', i === 0 && 'is-active')} aria-current={i === 0 ? 'page' : undefined}>{link.label}</a>
+                  <a href={pageHref(link.href)} className={cx('nav__link', link.page === currentPage && 'is-active')} aria-current={link.page === currentPage ? 'page' : undefined}>{link.label}</a>
                 </li>
               )
             )}
           </ul>
+          <a href={quoteHref} className="btn btn--primary nav__cta">
+            Get a Free Quote
+            <ArrowRight />
+          </a>
         </nav>
 
-        <a href="#contact" className="btn btn--primary">
+        <a href={quoteHref} className="btn btn--primary header__cta">
           Get a Free Quote
           <ArrowRight />
         </a>
+
+        <button
+          ref={burgerRef}
+          type="button"
+          className="burger"
+          aria-expanded={menuOpen}
+          aria-controls="mainNav"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          onClick={(e) => { e.stopPropagation(); setMenuOpen((o) => !o); }}
+        >
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </header>
   );

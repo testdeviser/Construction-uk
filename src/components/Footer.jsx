@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react';
 import { company, quickLinks, services } from '../data/site';
 import { ArrowRight, MailIcon, PhoneIcon, PinIcon, SocialList } from './Icons';
-import { Reveal, cx, useServices } from './common';
+import { Reveal, cx, currentPage, pageHref, useServices } from './common';
 import { Logo } from './Header';
 import { prefersReducedMotion, useScrollFrame } from '../hooks';
 
 const FLink = ({ href, label, onClick }) => (
-  <li><a href={href} className="flink" onClick={onClick}><ArrowRight /><span>{label}</span></a></li>
+  <li><a href={pageHref(href)} className="flink" onClick={onClick}><ArrowRight /><span>{label}</span></a></li>
 );
 
 export default function Footer() {
@@ -52,7 +52,7 @@ export default function Footer() {
           <Reveal className="footer__col" d={2}>
             <h4>Our Services</h4>
             <ul className="flinks">
-              {services.map((s, i) => <FLink key={s.title} href="#services" label={s.title} onClick={() => openService(i)} />)}
+              {services.map((s, i) => <FLink key={s.title} href="#services" label={s.title} onClick={currentPage === 'home' ? () => openService(i) : undefined} />)}
             </ul>
           </Reveal>
 

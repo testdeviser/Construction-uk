@@ -38,17 +38,50 @@ export default function Process() {
   }, [cur, run, inView, reduce, n, set]);
 
   // Size the track + progress fill to the node positions
+  // (measured in the timeline's content box, so it also works while the row is scrolled sideways on tablet/phone)
   const layout = useCallback(() => {
     const tl = tlRef.current;
     if (!tl) return;
+    const tlLeft = tl.getBoundingClientRect().left;
     const nodeX = (i) => {
       const node = stepRefs.current[i].querySelector('.step__node');
-      return node.getBoundingClientRect().left + node.offsetWidth / 2 - tl.getBoundingClientRect().left - 28;
+      const r = node.getBoundingClientRect();
+      return r.left + r.width / 2 - tlLeft + tl.scrollLeft;
     };
-    trackRef.current.style.width = nodeX(n - 1) + 'px';
-    fillRef.current.style.width = Math.max(0, nodeX(cur)) + 'px';
+    const start = nodeX(0);
+    trackRef.current.style.left = start + 'px';
+    trackRef.current.style.width = nodeX(n - 1) - start + 'px';
+    fillRef.current.style.width = Math.max(0, nodeX(cur) - start) + 'px';
     bgRef.current.style.setProperty('--gx', 12 + cur * 25 + '%');
   }, [cur, n, tlRef]);
+
+  // Tablet/phone: the steps sit in a sideways-scrolling row – slide the active card into view
+  useEffect(() => {
+    const tl = tlRef.current;
+    if (!tl || tl.scrollWidth <= tl.clientWidth + 1) return; // desktop: everything already visible
+    const step = stepRefs.current[cur];
+    const fullyVisible = step.offsetLeft >= tl.scrollLeft - 1 && step.offsetLeft + step.offsetWidth <= tl.scrollLeft + tl.clientWidth + 1;
+    if (!fullyVisible) tl.scrollTo({ left: step.offsetLeft, behavior: reduce ? 'auto' : 'smooth' });
+  }, [cur, run, reduce, tlRef]);
+
+  // …and when the visitor swipes the row, make the card they stopped on the active step
+  const scrollTimer = useRef(0);
+  const onTimelineScroll = () => {
+    clearTimeout(scrollTimer.current);
+    scrollTimer.current = setTimeout(() => {
+      const tl = tlRef.current;
+      if (!tl) return;
+      const active = stepRefs.current[cur];
+      const activeVisible = active.offsetLeft >= tl.scrollLeft - 1 && active.offsetLeft + active.offsetWidth <= tl.scrollLeft + tl.clientWidth + 1;
+      if (activeVisible) return; // includes the end of the row, where two cards share the view
+      let best = 0;
+      stepRefs.current.forEach((s, i) => {
+        if (Math.abs(s.offsetLeft - tl.scrollLeft) < Math.abs(stepRefs.current[best].offsetLeft - tl.scrollLeft)) best = i;
+      });
+      set(best);
+    }, 140);
+  };
+  useEffect(() => () => clearTimeout(scrollTimer.current), []);
   useLayoutEffect(layout, [layout, run]);
   useEffect(() => {
     window.addEventListener('resize', layout);
@@ -76,6 +109,7 @@ export default function Process() {
 
         <ol
           className="timeline" id="timeline" ref={tlRef}
+          onScroll={onTimelineScroll}
           onMouseEnter={() => { pausedRef.current = true; setPaused(true); }}
           onMouseLeave={() => { pausedRef.current = false; setPaused(false); set(cur); }}
         >
