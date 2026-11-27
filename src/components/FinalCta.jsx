@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { company } from '../data/site';
 import { ArrowRight, MailIcon, PhoneIcon, PinIcon } from './Icons';
 import { Reveal, cx } from './common';
@@ -10,13 +10,44 @@ export default function FinalCta() {
   const [highlight, setHighlight] = useState(false);
   const [revealRef, visible] = useInView({ threshold: 0.15, rootMargin: '0px 0px -40px 0px' }, true);
 
-  // "Get a Free Quote" / "Contact Us": bring the form into focus
-  const toForm = (e) => {
-    e.preventDefault();
-    formRef.current.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'center' });
+  // Scroll to the form and briefly highlight it.
+  // Centre the form in the space below the sticky header when it fits; otherwise (phones, where the
+  // form is taller than the screen) line its top up just below the header so its title isn't hidden.
+  const goToForm = () => {
+    const form = formRef.current;
+    if (!form) return;
+    const headerH = document.querySelector('.header')?.offsetHeight || 0;
+    let shift = 0;   // the form may still be mid scroll-reveal (moved down) – aim for where it will end up
+    try { shift = new DOMMatrixReadOnly(getComputedStyle(form).transform).m42; } catch { /* 'none' */ }
+    const formTop = form.getBoundingClientRect().top - shift + window.scrollY;
+    const space = window.innerHeight - headerH;
+    const offset = form.offsetHeight + 32 <= space ? headerH + (space - form.offsetHeight) / 2 : headerH + 10;
+    window.scrollTo({ top: formTop - offset, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
     setHighlight(false);
     requestAnimationFrame(() => requestAnimationFrame(() => setHighlight(true)));
   };
+
+  // "Get a Free Quote" / "Contact Us" buttons in this section
+  const toForm = (e) => { e.preventDefault(); goToForm(); };
+
+  // Tablets & phones: this section stacks its text and contact cards ABOVE the form, so every
+  // homepage button that links here (#contact – header, menu, "Discuss Your Project",
+  // "Start Your Project"…) goes straight to the form instead. Desktop shows the form beside the
+  // text, so those links keep jumping to the section as normal.
+  const goToFormRef = useRef(goToForm);
+  goToFormRef.current = goToForm;
+  useEffect(() => {
+    const stacked = window.matchMedia('(max-width: 1100px)');
+    const onClick = (e) => {
+      if (!stacked.matches || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
+      if (!e.target.closest?.('a[href="#contact"]')) return;
+      e.preventDefault();
+      // wait a moment so the mobile menu (if that's where the link was) has closed and unlocked scrolling
+      setTimeout(() => goToFormRef.current(), 60);
+    };
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
+  }, []);
 
   return (
     <section className="section final-cta" id="contact">

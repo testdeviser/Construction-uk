@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { company } from '../../data/site';
 import { MailIcon, PhoneIcon } from '../Icons';
-import { A, Reveal, cx } from '../common';
+import { A, cx } from '../common';
 
 /* Body of the Privacy Policy and Terms & Conditions pages:
    sticky "On this page" contents (highlights the section you're reading) + numbered sections.
@@ -77,7 +77,9 @@ export default function LegalContent({ data }) {
           <HelpCard text={data.help} className="legal-help--aside" />
         </aside>
 
-        <Reveal as="article" className="legal__body">
+        {/* plain article, not <Reveal>: the card is too tall for 15% of it to ever be on screen,
+            so a scroll-reveal would leave it invisible on normal laptop screens */}
+        <article className="legal__body">
           <p className="legal__updated">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></svg>
             Last updated: {data.updated}
@@ -89,7 +91,7 @@ export default function LegalContent({ data }) {
               {s.blocks.map((b, k) => <Block block={b} key={k} />)}
             </section>
           ))}
-        </Reveal>
+        </article>
 
         <HelpCard text={data.help} className="legal-help--bottom" />
       </div>
