@@ -1,21 +1,9 @@
-# Builds the React site and uploads it to the live server over FTP
-# every time something is pushed or merged into `main`.
-#
-# Required repository secrets (Settings → Secrets and variables → Actions):
-#   FTP_SERVER    e.g. ftp.tdcatalog.com
-#   FTP_USERNAME  the FTP account used in FileZilla
-#   FTP_PASSWORD  that account's password
-#
-# Optional repository variables (same page, "Variables" tab):
-#   FTP_SERVER_DIR  folder on the server, default /construction-uk/
-#   FTP_PROTOCOL    ftp or ftps, default ftp
-
-name: Deploy to server
+name: Deploy to FTP
 
 on:
   push:
     branches: [main]
-  workflow_dispatch: # allows a manual run from the Actions tab
+  workflow_dispatch:
 
 concurrency:
   group: deploy-production
@@ -25,10 +13,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -40,14 +28,15 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Upload to server
+      - name: Upload to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ${{ vars.FTP_PROTOCOL || 'ftp' }}
+          port: 21
+          protocol: ftps
           local-dir: ./dist/
-          server-dir: ${{ vars.FTP_SERVER_DIR || '/construction-uk/' }}
-          # Only uploads changed files. Files on the server that this
-          # workflow never uploaded (e.g. html-version/) are left alone.
+          # The FTP account's root is the website's /design/ folder,
+          # so the site goes into construction-uk/ inside it.
+          server-dir: ./construction-uk/
