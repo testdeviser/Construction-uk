@@ -1706,6 +1706,12 @@ a.contact-card:hover .contact-card__go { opacity: 1; transform: none; }
 .stepper { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 0 26px; padding: 0; list-style: none; }
 .stepper li { position: relative; display: flex; align-items: center; gap: 10px; padding-top: 12px; font-size: 13.5px; font-weight: 700; color: #a39d94; transition: color .3s var(--ease); }
 .stepper li::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; border-radius: 4px; background: var(--line); }
+/* step labels: full on larger screens, one word on phones (see ≤560 rule) */
+.stepper__short { display: none; }
+@media (max-width: 560px) {
+  .stepper__full { display: none; }
+  .stepper__short { display: inline; }
+}
 .stepper li::after { content: ""; position: absolute; left: 0; top: 0; height: 4px; width: 0; border-radius: 4px; background: linear-gradient(90deg, #ff9466, var(--accent)); transition: width .5s var(--ease); }
 .stepper li.is-current::after { width: 40%; }
 .stepper li.is-done::after { width: 100%; }

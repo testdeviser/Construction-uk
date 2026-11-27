@@ -13,6 +13,7 @@ import { cx } from './common';
 import { prefersReducedMotion } from '../hooks';
 
 const STEPS = ['Service', 'Your Details', 'Project Details'];
+const STEP_SHORT = ['Service', 'Details', 'Project'];   // shown instead on phones, where the full labels wrap
 const MAX_MSG = 500;
 
 const rules = {
@@ -249,7 +250,9 @@ export default function QuoteForm({ idPrefix, title, titleAs: Title = 'h2', clas
       <ol className="stepper" aria-hidden="true">
         {STEPS.map((label, k) => (
           <li key={label} className={cx(!done && k === step && 'is-current', (done || k < step) && 'is-done')}>
-            <b>{k + 1}</b><span>{label}</span>
+            <b>{k + 1}</b>
+            <span className="stepper__full">{label}</span>
+            <span className="stepper__short">{STEP_SHORT[k]}</span>
           </li>
         ))}
       </ol>
