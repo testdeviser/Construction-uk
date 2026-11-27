@@ -1,16 +1,17 @@
 import { useRef, useState } from 'react';
 import { company, quickLinks, services } from '../data/site';
 import { ArrowRight, MailIcon, PhoneIcon, PinIcon, SocialList } from './Icons';
-import { Reveal, cx, currentPage, pageHref, useServices } from './common';
+import { A, Reveal, cx, usePage, useServices } from './common';
 import { Logo } from './Header';
 import { prefersReducedMotion, useScrollFrame } from '../hooks';
 
 const FLink = ({ href, label, onClick }) => (
-  <li><a href={pageHref(href)} className="flink" onClick={onClick}><ArrowRight /><span>{label}</span></a></li>
+  <li><A href={href} className="flink" onClick={onClick}><ArrowRight /><span>{label}</span></A></li>
 );
 
 export default function Footer() {
   const { openService } = useServices();
+  const { currentPage } = usePage();
   const brandRef = useRef(null);
   const ringRef = useRef(null);
   const [toTopOn, setToTopOn] = useState(false);

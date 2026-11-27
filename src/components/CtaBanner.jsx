@@ -1,9 +1,10 @@
 import { ArrowRight } from './Icons';
-import { Reveal, Title, quoteHref } from './common';
+import { A, Reveal, Title, usePage } from './common';
 
 /* Closing call to action on inner pages: the homepage dark box, centred, two buttons.
    `data` = { eyebrow, title, accent, text, primary, secondary } */
 export default function CtaBanner({ data }) {
+  const { quoteHref } = usePage();
   return (
     <section className="section final-cta" id="contact">
       <div className="container final-cta__box final-cta__box--center">
@@ -12,8 +13,8 @@ export default function CtaBanner({ data }) {
         <Reveal as="h2" className="h2 h2--light final-cta__title" d={1}><Title text={data.title} accent={data.accent} /></Reveal>
         <Reveal as="p" className="final-cta__lead" d={2}>{data.text}</Reveal>
         <Reveal className="btn-group" d={3}>
-          <a href={quoteHref} className="btn btn--primary">{data.primary} <ArrowRight /></a>
-          <a href="contact.html" className="btn btn--outline-light">{data.secondary}</a>
+          <A href={quoteHref} className="btn btn--primary">{data.primary} <ArrowRight /></A>
+          <A href="/contact" className="btn btn--outline-light">{data.secondary}</A>
         </Reveal>
       </div>
     </section>

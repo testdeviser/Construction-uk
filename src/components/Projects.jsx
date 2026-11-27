@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { projectFilters, projects } from '../data/site';
 import { ArrowLeft, ArrowRight, ExpandIcon } from './Icons';
-import { Img, Reveal, Title, cx, quoteHref } from './common';
+import { A, Img, Reveal, Title, cx, usePage } from './common';
 import { prefersReducedMotion } from '../hooks';
 
 const matches = (f) => (p) => f === 'all' || p.cat === f;
@@ -15,6 +15,7 @@ const defaultHead = {
 /* Project gallery. Homepage: default heading + "View All Projects".
    Projects page: its own heading (`head`) and a quote button instead (`showMore={false}`). */
 export default function Projects({ head = defaultHead, showMore = true }) {
+  const { quoteHref } = usePage();
   const reduce = prefersReducedMotion();
   const [filter, setFilter] = useState('all');
   const [entering, setEntering] = useState({}); // id -> animation delay (ms)
@@ -173,11 +174,11 @@ export default function Projects({ head = defaultHead, showMore = true }) {
 
         {showMore ? (
           <Reveal className="center projects__more">
-            <a href="projects.html" className="btn btn--dark">View All Projects <ArrowRight /></a>
+            <A href="/projects" className="btn btn--dark">View All Projects <ArrowRight /></A>
           </Reveal>
         ) : (
           <Reveal className="center projects__more">
-            <a href={quoteHref} className="btn btn--primary">Start Your Project <ArrowRight /></a>
+            <A href={quoteHref} className="btn btn--primary">Start Your Project <ArrowRight /></A>
           </Reveal>
         )}
       </div>

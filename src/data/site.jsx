@@ -18,13 +18,13 @@ export const company = {
 };
 
 /* `page` marks which page a link belongs to (highlights it in the menu).
-   Links starting with # point at homepage sections; on other pages they lead back to the homepage. */
+   Links starting with / are pages; links starting with # point at homepage sections (on other pages they lead back to the homepage). */
 export const navLinks = [
   { label: 'Home', href: '#home', page: 'home' },
-  { label: 'About Us', href: 'about.html', page: 'about' },
+  { label: 'About Us', href: '/about', page: 'about' },
   { label: 'Services', dropdown: true },
-  { label: 'Our Projects', href: 'projects.html', page: 'projects' },
-  { label: 'Contact Us', href: 'contact.html', page: 'contact' },
+  { label: 'Our Projects', href: '/projects', page: 'projects' },
+  { label: 'Contact Us', href: '/contact', page: 'contact' },
 ];
 
 /* Icon paths (24x24, stroked) */
@@ -177,14 +177,14 @@ export const faqs = [
 
 export const quickLinks = [
   { label: 'Home', href: '#home' },
-  { label: 'About Us', href: 'about.html' },
+  { label: 'About Us', href: '/about' },
   { label: 'Our Services', href: '#services' },
-  { label: 'Our Projects', href: 'projects.html' },
-  { label: 'Contact Us', href: 'contact.html' },
+  { label: 'Our Projects', href: '/projects' },
+  { label: 'Contact Us', href: '/contact' },
 ];
 
 /* =========================================================
-   ABOUT US page (about.html)
+   ABOUT US page (/about)
    ========================================================= */
 export const aboutPage = {
   hero: {
@@ -256,7 +256,7 @@ export const aboutPage = {
 };
 
 /* =========================================================
-   CONTACT US page (contact.html)
+   CONTACT US page (/contact)
    Copy written to match the rest of the site – edit freely.
    Phone, email and address come from `company` at the top of this file.
    ========================================================= */
@@ -304,7 +304,7 @@ export const contactPage = {
 };
 
 /* =========================================================
-   OUR PROJECTS page (projects.html)
+   OUR PROJECTS page (/projects)
    The gallery itself uses `projects` and `projectFilters` above –
    add real project titles / photos there and they show on both pages.
    ========================================================= */

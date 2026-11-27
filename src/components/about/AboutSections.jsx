@@ -1,6 +1,6 @@
 import { aboutPage, company } from '../../data/site';
 import { ArrowRight, Ico, PhoneIcon } from '../Icons';
-import { Img, Reveal, Title } from '../common';
+import { A, Img, Reveal, Title } from '../common';
 import { prefersReducedMotion } from '../../hooks';
 
 const { whoWeAre, missionVision, whyUs, partners } = aboutPage;
@@ -35,7 +35,7 @@ export function WhoWeAre() {
             <Reveal as="p" className="who__text" d={2 + i} key={i}>{p}</Reveal>
           ))}
           <Reveal className="about__actions who__actions" d={4}>
-            <a href="./#services" className="btn btn--primary">{whoWeAre.cta} <ArrowRight /></a>
+            <A href="/#services" className="btn btn--primary">{whoWeAre.cta} <ArrowRight /></A>
             <a href={company.phoneHref} className="about__call">
               <span className="about__call-icon"><PhoneIcon /></span>
               <span><small>Prefer to Talk?</small>{company.phone}</span>
