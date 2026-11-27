@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { faqs } from '../data/site';
-import { Reveal, cx } from './common';
+import { faqs as defaultFaqs } from '../data/site';
+import { Reveal, Title, cx } from './common';
 import { prefersReducedMotion } from '../hooks';
 
 const EASE = 'cubic-bezier(.2,.7,.2,1)';
@@ -49,7 +49,10 @@ function Faq({ item, num, isOpen, hidden, q, d, onToggle, summaryRef }) {
   );
 }
 
-export default function Faqs() {
+const defaultHead = { eyebrow: 'Have a Question?', title: 'Frequently Asked', accent: 'Questions' };
+
+/* FAQ accordion with search. Homepage/Contact: the general FAQs; service pages pass their own `items` + `head`. */
+export default function Faqs({ items: faqs = defaultFaqs, head = defaultHead }) {
   const [openIndex, setOpenIndex] = useState(0);
   const [query, setQuery] = useState('');
   const summaryRefs = useRef([]);
@@ -97,8 +100,8 @@ export default function Faqs() {
     <section className="section faqs" id="faqs">
       <div className="container">
         <div className="section-head section-head--center faqs__head">
-          <Reveal as="p" className="eyebrow" d={0}>Have a Question?</Reveal>
-          <Reveal as="h2" className="h2" d={1}>Frequently Asked <em className="hl">Questions</em></Reveal>
+          <Reveal as="p" className="eyebrow" d={0}>{head.eyebrow}</Reveal>
+          <Reveal as="h2" className="h2" d={1}><Title text={head.title} accent={head.accent} /></Reveal>
           <Reveal className="faq-search" d={2}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4.2-4.2" /></svg>
             <label htmlFor="faqSearch" className="sr-only">Search Questions</label>

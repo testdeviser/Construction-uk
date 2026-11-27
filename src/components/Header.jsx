@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router';
 import { company, navLinks, services } from '../data/site';
 import { ArrowRight, LogoMark, SocialList } from './Icons';
 import { A, cx, usePage } from './common';
@@ -41,9 +42,14 @@ export function Logo({ light }) {
 
 export default function Header() {
   const { currentPage, quoteHref } = usePage();
+  const { pathname } = useLocation();
+  const currentPath = pathname.replace(/\/+$/, '');   // e.g. '/services/kitchen-bathroom'
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // mobile / tablet menu
+  // Desktop: the dropdown also opens on hover/focus. After choosing a service, keep it
+  // hidden until the pointer leaves "Services" – otherwise it stays open over the new page.
+  const [suppressed, setSuppressed] = useState(false);
   const toggleRef = useRef(null);
   const burgerRef = useRef(null);
 
@@ -88,23 +94,34 @@ export default function Header() {
               link.dropdown ? (
                 <li
                   key={link.label}
-                  className={cx('nav__item has-dropdown', open && 'is-open')}
+                  className={cx('nav__item has-dropdown', open && 'is-open', suppressed && 'is-suppressed')}
+                  onMouseLeave={() => setSuppressed(false)}
                   onKeyDown={(e) => {
                     if (e.key === 'Escape') { setOpen(false); toggleRef.current?.focus(); }
                   }}
                 >
                   <button
                     ref={toggleRef}
-                    className="nav__link nav__toggle"
+                    className={cx('nav__link nav__toggle', currentPage === 'services' && 'is-active')}
                     aria-expanded={open}
                     aria-controls="servicesMenu"
-                    onClick={(e) => { e.stopPropagation(); setOpen((o) => !o); }}
+                    onClick={(e) => { e.stopPropagation(); setSuppressed(false); setOpen((o) => !o); }}
                   >
                     {link.label}
                     <svg className="nav__caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </button>
-                  <ul className="dropdown" id="servicesMenu">
-                    {services.map((s) => <li key={s.title}><a href="#">{s.title}</a></li>)}
+                  <ul
+                    className="dropdown" id="servicesMenu"
+                    onClick={(e) => {
+                      if (!e.target.closest('a')) return;
+                      setSuppressed(true);            // hide straight away (hover would keep it open)
+                      e.target.closest('a').blur();   // …and drop focus so :focus-within doesn't either
+                    }}
+                  >
+                    {services.map((s) => {
+                      const active = !!s.href && s.href === currentPath;   // the service page that's open
+                      return <li key={s.title}><A href={s.href || '#'} className={active ? 'is-active' : undefined} aria-current={active ? 'page' : undefined}>{s.title}</A></li>;
+                    })}
                   </ul>
                 </li>
               ) : (
