@@ -1,11 +1,12 @@
 import { projectsPage, services } from '../../data/site';
 import { ArrowRight, Ico } from '../Icons';
-import { Img, Reveal, Title, quoteHref } from '../common';
+import { A, Img, Reveal, Title, usePage } from '../common';
 
 const { services: head } = projectsPage;
 
 /* "What We Work On": one photo card per service (data from `services`) */
 export default function ServiceCards() {
+  const { quoteHref } = usePage();
   return (
     <section className="section svc-cards" id="what-we-do">
       <div className="container">
@@ -29,10 +30,10 @@ export default function ServiceCards() {
                 <h3 className="scard__title">{s.title}</h3>
                 <p className="scard__text">{s.text}</p>
                 <ul className="scard__tags">{s.tags.map((t) => <li key={t}>{t}</li>)}</ul>
-                <a href={quoteHref} className="scard__link">
+                <A href={quoteHref} className="scard__link">
                   Request a Quote <span className="scard__go"><ArrowRight /></span>
                   <span className="sr-only"> for {s.title}</span>
-                </a>
+                </A>
               </div>
             </Reveal>
           ))}

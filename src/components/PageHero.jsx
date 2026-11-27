@@ -1,6 +1,6 @@
 import { company } from '../data/site';
 import { PhoneIcon } from './Icons';
-import { Img } from './common';
+import { A, Img } from './common';
 
 /* Banner at the top of inner pages (About, Contact…):
    eyebrow, two-line heading, intro text, and a bottom bar with breadcrumb + phone number.
@@ -28,7 +28,7 @@ export default function PageHero({ data }) {
         <div className="container page-hero__bottom-inner">
           <nav className="breadcrumb reveal" style={{ '--d': 4 }} aria-label="Breadcrumb">
             <ol>
-              <li><a href="./">Home</a></li>
+              <li><A href="/">Home</A></li>
               <li aria-current="page">{data.eyebrow}</li>
             </ol>
           </nav>

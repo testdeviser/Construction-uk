@@ -1,31 +1,57 @@
-import { createContext, useCallback, useContext, useRef, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { Link, useLocation } from 'react-router';
 import { mergeRefs, useInView } from '../hooks';
+import { pageByPath } from '../pages';
 
 export const cx = (...c) => c.filter(Boolean).join(' ');
 
 /* Section heading with the last word in orange + brush underline (the site's heading style) */
 export const Title = ({ text, accent }) => <>{text} <em className="hl">{accent}</em></>;
 
-/* Which page is showing – set by <html data-page="…"> in each HTML file (index.html = home) */
-export const currentPage = document.documentElement.dataset.page || 'home';
+/* Which page is showing ('home', 'about', 'projects', 'contact'), from the URL */
+export function usePage() {
+  const { pathname } = useLocation();
+  const currentPage = pageByPath(pathname).page;
+  /* Where "Get a Free Quote" buttons go: the form on the homepage, or the Contact page form */
+  const quoteHref = currentPage === 'home' ? '#contact' : '/contact#quote';
+  return { currentPage, quoteHref };
+}
 
-/* Homepage section links (#projects …) work as-is on the homepage;
-   on other pages they lead back to that section of the homepage. */
-export const pageHref = (href) => (href.startsWith('#') && currentPage !== 'home' ? './' + href : href);
+/* Site link. Page links ('/about', '/contact#quote') go through React Router (no reload).
+   Section links ('#projects') stay plain anchors on the homepage; on other pages they
+   lead back to that section of the homepage. Anything else (tel:, mailto:, '#') is a plain <a>. */
+export function A({ href, ...rest }) {
+  const { currentPage } = usePage();
+  const to = href.startsWith('/') ? href
+    : href.startsWith('#') && href.length > 1 && currentPage !== 'home' ? '/' + href
+    : null;
+  return to ? <Link to={to} {...rest} /> : <a href={href} {...rest} />;
+}
 
-/* Where "Get a Free Quote" buttons go: the form on the homepage, or the Contact page form */
-export const quoteHref = currentPage === 'home' ? '#contact' : currentPage === 'contact' ? '#quote' : 'contact.html#quote';
+/* Scroll position on navigation: new page → top; URL with #section → that section.
+   React draws the page after the browser's own jump, so retry once fonts/images settle. */
+export function ScrollManager() {
+  const { pathname, hash, key } = useLocation();
+  useEffect(() => {
+    if (!hash) { window.scrollTo(0, 0); return; }
+    const go = () => document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView({ block: 'start' });
+    const t = setTimeout(go, 50);
+    const onLoad = () => setTimeout(go, 50);
+    window.addEventListener('load', onLoad, { once: true });
+    return () => { clearTimeout(t); window.removeEventListener('load', onLoad); };
+  }, [pathname, hash, key]);
+  return null;
+}
 
-/* Arriving from another page with a #section link: React draws the page after the browser's
-   own jump, so scroll to the section once it exists (and again when fonts/images settle). */
-export function scrollToHash() {
-  const go = () => {
-    const id = decodeURIComponent(window.location.hash.slice(1));
-    if (id) document.getElementById(id)?.scrollIntoView({ block: 'start' });
-  };
-  if (!window.location.hash) return;
-  setTimeout(go, 50);
-  window.addEventListener('load', () => setTimeout(go, 50), { once: true });
+/* Browser-tab title and search description for the current page */
+export function PageMeta() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    const p = pageByPath(pathname);
+    document.title = p.title;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', p.description);
+  }, [pathname]);
+  return null;
 }
 
 /* Scroll-reveal wrapper: renders any tag with data-reveal and adds

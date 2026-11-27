@@ -2503,7 +2503,7 @@ main > section:not(.hero),
 }
 
 /* =========================================================
-   ABOUT US PAGE (about.html)
+   ABOUT US PAGE (/about)
    Reuses the homepage building blocks (.about collage, .wcard, .final-cta__box)
    and adds: page hero banner, mission & vision cards, partner logos.
    ========================================================= */
@@ -2724,7 +2724,7 @@ main > section:not(.hero),
 }
 
 /* =========================================================
-   CONTACT US PAGE (contact.html)
+   CONTACT US PAGE (/contact)
    Reuses .page-hero, the homepage dark contact box (.final-cta__box) with the
    quote form, and the FAQs. Adds: contact option cards, next steps, map + hours.
    ========================================================= */
@@ -2879,7 +2879,7 @@ main > section.faqs:last-child { margin-bottom: var(--gutter); } /* …and keep 
 }
 
 /* =========================================================
-   OUR PROJECTS PAGE (projects.html)
+   OUR PROJECTS PAGE (/projects)
    Reuses .page-hero, the homepage gallery, process, testimonials and the CTA box.
    Adds: service photo cards.
    ========================================================= */

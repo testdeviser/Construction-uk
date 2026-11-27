@@ -1,6 +1,6 @@
 import { company, contactPage } from '../../data/site';
 import { ArrowRight, MailIcon, PhoneIcon, PinIcon, SocialList } from '../Icons';
-import { Reveal, Title, quoteHref } from '../common';
+import { A, Reveal, Title, usePage } from '../common';
 import QuoteForm from '../QuoteForm';
 
 const { options, enquiry, location } = contactPage;
@@ -80,6 +80,7 @@ export function Enquiry() {
 
 /* ---------- 04 Find us: map, address, opening hours ---------- */
 export function Location() {
+  const { quoteHref } = usePage();
   return (
     <section className="section location" id="find-us">
       <div className="container location__grid">
@@ -116,7 +117,7 @@ export function Location() {
           </Reveal>
 
           <Reveal className="btn-group" d={4}>
-            <a href={quoteHref} className="btn btn--primary">Get a Free Quote <ArrowRight /></a>
+            <A href={quoteHref} className="btn btn--primary">Get a Free Quote <ArrowRight /></A>
             <a href={company.phoneHref} className="btn btn--dark">Call {company.phone}</a>
           </Reveal>
         </div>

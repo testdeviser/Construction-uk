@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { company, navLinks, services } from '../data/site';
 import { ArrowRight, LogoMark, SocialList } from './Icons';
-import { cx, currentPage, pageHref, quoteHref } from './common';
+import { A, cx, usePage } from './common';
 
 export function Topbar() {
   return (
@@ -29,17 +29,18 @@ export function Topbar() {
 
 export function Logo({ light }) {
   return (
-    <a href="./" className={cx('logo', light && 'logo--light')} aria-label={light ? undefined : 'Homepage'}>
+    <A href="/" className={cx('logo', light && 'logo--light')} aria-label={light ? undefined : 'Homepage'}>
       <LogoMark />
       <span className="logo__text">
         <span className="logo__name">{company.name}</span>
         <span className="logo__sub">{company.sub}</span>
       </span>
-    </a>
+    </A>
   );
 }
 
 export default function Header() {
+  const { currentPage, quoteHref } = usePage();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // mobile / tablet menu
@@ -108,21 +109,21 @@ export default function Header() {
                 </li>
               ) : (
                 <li className="nav__item" key={link.label}>
-                  <a href={pageHref(link.href)} className={cx('nav__link', link.page === currentPage && 'is-active')} aria-current={link.page === currentPage ? 'page' : undefined}>{link.label}</a>
+                  <A href={link.href} className={cx('nav__link', link.page === currentPage && 'is-active')} aria-current={link.page === currentPage ? 'page' : undefined}>{link.label}</A>
                 </li>
               )
             )}
           </ul>
-          <a href={quoteHref} className="btn btn--primary nav__cta">
+          <A href={quoteHref} className="btn btn--primary nav__cta">
             Get a Free Quote
             <ArrowRight />
-          </a>
+          </A>
         </nav>
 
-        <a href={quoteHref} className="btn btn--primary header__cta">
+        <A href={quoteHref} className="btn btn--primary header__cta">
           Get a Free Quote
           <ArrowRight />
-        </a>
+        </A>
 
         <button
           ref={burgerRef}
