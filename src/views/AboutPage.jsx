@@ -1,5 +1,6 @@
 import PageHero from '../components/PageHero';
 import CtaBanner from '../components/CtaBanner';
+import Testimonials from '../components/Testimonials';
 import { aboutPage } from '../data/site';
 import { MissionVision, Partners, WhoWeAre, WhyUs } from '../components/about/AboutSections';
 
@@ -12,6 +13,7 @@ export default function AboutPage() {
       <MissionVision />
       <WhyUs />
       <Partners />
+      <Testimonials />
       <CtaBanner data={aboutPage.cta} />
     </>
   );
