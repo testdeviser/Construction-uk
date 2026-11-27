@@ -28,6 +28,19 @@ jobs:
       - name: Build
         run: npm run build
 
+      # SMTP login for the quote form mailer (public/send-enquiry.php).
+      # Kept in GitHub Secrets so the password never goes into Git; skipped if not set.
+      - name: Write SMTP settings for the quote form
+        run: node scripts/write-smtp-config.mjs
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_SECURE: ${{ secrets.SMTP_SECURE }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SMTP_FROM: ${{ secrets.SMTP_FROM }}
+          SMTP_FROM_NAME: ${{ secrets.SMTP_FROM_NAME }}
+
       - name: Upload to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:

@@ -7,6 +7,8 @@ import AboutPage from './views/AboutPage';
 import ProjectsPage from './views/ProjectsPage';
 import ContactPage from './views/ContactPage';
 import ServicePage from './views/ServicePage';
+import LegalPage from './views/LegalPage';
+import { privacyPage, termsPage } from './data/legal';
 import { pages } from './pages';
 
 // Service pages are listed in pages.js with a `slug` (content in servicePages, data/site.jsx)
@@ -29,6 +31,8 @@ export default function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/privacy-policy" element={<LegalPage data={privacyPage} />} />
+          <Route path="/terms-conditions" element={<LegalPage data={termsPage} />} />
           {servicePagesList.map((p) => (
             <Route key={p.path} path={p.path} element={<ServicePage slug={p.slug} />} />
           ))}

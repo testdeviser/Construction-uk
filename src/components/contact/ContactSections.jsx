@@ -1,9 +1,9 @@
 import { company, contactPage } from '../../data/site';
-import { ArrowRight, MailIcon, PhoneIcon, PinIcon, SocialList } from '../Icons';
+import { ArrowRight, MailIcon, PhoneIcon, PinIcon } from '../Icons';
 import { A, Reveal, Title, usePage } from '../common';
 import QuoteForm from '../QuoteForm';
 
-const { options, enquiry, location } = contactPage;
+const { options, location } = contactPage;
 
 const optionIcons = { phone: PhoneIcon, mail: MailIcon, pin: PinIcon };
 const optionValues = {
@@ -35,44 +35,61 @@ export function ContactOptions() {
   );
 }
 
-/* ---------- 03 Enquiry: next steps + quote form (homepage dark contact box) ---------- */
+/* ---------- 03 Enquiry: heading, the quote form on a "stacked" orange card, contact cards + reassurance ---------- */
+const perkIcons = {
+  tag: 'M3 12V4h8l10 10-8 8L3 12ZM7.5 7.5h.01',
+  steps: 'M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01',
+  shield: 'M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6l-8-3ZM9 12l2 2 4-4',
+};
+
 export function Enquiry() {
+  const { enquiry } = contactPage;
   return (
-    <section className="section final-cta contact-enquiry" id="quote">
-      <div className="container final-cta__box">
-        <div className="final-cta__bg" aria-hidden="true"><span className="final-cta__orb final-cta__orb--1"></span><span className="final-cta__orb final-cta__orb--2"></span></div>
+    <section className="section contact-enquiry" id="quote">
+      <span className="contact-enquiry__dots contact-enquiry__dots--tl" aria-hidden="true"></span>
+      <span className="contact-enquiry__dots contact-enquiry__dots--br" aria-hidden="true"></span>
 
-        <div className="final-cta__content">
-          <Reveal as="p" className="eyebrow eyebrow--light" d={0}>{enquiry.eyebrow}</Reveal>
-          <Reveal as="h2" className="h2 h2--light final-cta__title" d={1}><Title text={enquiry.title} accent={enquiry.accent} /></Reveal>
-          <Reveal as="p" className="final-cta__lead" d={2}>{enquiry.text}</Reveal>
-
-          <Reveal className="next-steps" d={3}>
-            <p className="next-steps__title">{enquiry.stepsTitle}</p>
-            <ol>
-              {enquiry.steps.map((s, i) => (
-                <li key={s.title}>
-                  <span className="next-steps__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-                  <span><b>{s.title}</b>{s.text}</span>
-                </li>
-              ))}
-            </ol>
-          </Reveal>
-
-          <Reveal className="contact-enquiry__social" d={4}>
-            <span>Follow Us</span>
-            <SocialList className="footer__social" />
-          </Reveal>
+      <div className="container">
+        <div className="section-head section-head--center contact-enquiry__head">
+          <Reveal as="p" className="eyebrow" d={0}>{enquiry.eyebrow}</Reveal>
+          <Reveal as="h2" className="h2" d={1}><Title text={enquiry.title} accent={enquiry.accent} /></Reveal>
+          <Reveal as="p" className="section-head__text" d={2}>{enquiry.text}</Reveal>
         </div>
 
-        <QuoteForm
-          idPrefix="cf"
-          id="quoteForm"
-          className="form"
-          aria-label="Request a free quote"
-          titleAs="h3"
-          title={<>Request a Free <em className="hl">Quote</em></>}
-        />
+        <div className="contact-enquiry__stage">
+          {/* other ways to get in touch, floating beside the form on wide screens */}
+          <a href={company.phoneHref} className="enq-float enq-float--left">
+            <span className="enq-float__icon"><PhoneIcon /></span>
+            <span><small>Prefer to Talk?</small>{company.phone}</span>
+          </a>
+          <a href={`mailto:${company.email}`} className="enq-float enq-float--right">
+            <span className="enq-float__icon"><MailIcon /></span>
+            <span><small>Email Us</small>{company.email}</span>
+          </a>
+
+          <div className="contact-enquiry__formwrap">
+            <QuoteForm
+              idPrefix="cf"
+              id="quoteForm"
+              className="form"
+              aria-label="Request a free quote"
+              titleAs="h3"
+              title={<>Request a Free <em className="hl">Quote</em></>}
+            />
+          </div>
+        </div>
+
+        <ul className="enq-perks">
+          {enquiry.perks.map((p, i) => (
+            <Reveal as="li" className="enq-perk" d={i} key={p.title}>
+              <span className="enq-perk__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d={perkIcons[p.icon]} /></svg></span>
+              <span>
+                <b>{p.title}</b>
+                {p.link ? <A href={p.link.href}>{p.text}</A> : p.text}
+              </span>
+            </Reveal>
+          ))}
+        </ul>
       </div>
     </section>
   );

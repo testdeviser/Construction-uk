@@ -277,15 +277,15 @@ export const contactPage = {
     { key: 'address', label: 'Visit Us', note: 'Find us at our office', icon: 'pin' },
   ],
 
+  // the quote form section
   enquiry: {
-    eyebrow: 'Send an Enquiry',
+    eyebrow: 'Free Quote',
     title: 'Tell Us About Your', accent: 'Project',
-    text: 'Complete the short form and our team will get back to you to discuss your requirements and the next steps.',
-    stepsTitle: 'What happens next?',
-    steps: [
-      { title: 'We review your enquiry', text: 'We look at the details of your project and requirements.' },
-      { title: 'We get in touch', text: 'We contact you to discuss your ideas and answer any questions.' },
-      { title: 'Consultation & quotation', text: 'We arrange the next steps and provide a quotation for the work.' },
+    text: 'Complete the short form below and we will get back to you to discuss your requirements and the next steps.',
+    perks: [
+      { icon: 'tag', title: 'Free, No-Obligation Quote', text: 'Find out what your project involves' },
+      { icon: 'steps', title: 'Just 3 Quick Steps', text: 'Service, your details and your project' },
+      { icon: 'shield', title: 'Your Details Stay Private', text: 'See our Privacy Policy', link: { href: '/privacy-policy' } },
     ],
   },
 
