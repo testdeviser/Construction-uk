@@ -94,6 +94,7 @@ export const privacyPage = {
         'We only share your information where necessary, with:',
         { list: [
           'service providers who help us run our business, such as our website hosting and email providers',
+          ['FormSubmit (', { label: 'formsubmit.co', href: 'https://formsubmit.co' }, '), the service that delivers enquiries from the quote form on our website to our email inbox'],
           'suppliers or subcontractors involved in your project, where needed to carry out the work',
           'professional advisers such as accountants, insurers or legal advisers',
           'authorities or regulators where we are required to by law',
@@ -105,6 +106,7 @@ export const privacyPage = {
       id: 'cookies', title: 'Cookies & Third-Party Services',
       blocks: [
         'Our website does not use cookies for tracking, analytics or advertising, and we do not store anything on your device.',
+        'When you send an enquiry, the details you enter in the quote form are passed to FormSubmit, which emails them to us.',
         'To display the website, your browser loads fonts from Google Fonts and some images from Unsplash. When this happens, these services receive your IP address so they can deliver the content. Their use of this information is covered by their own privacy policies.',
         'Our website also links to our social media pages. If you follow these links, the social media platform\'s own privacy policy applies.',
       ],
@@ -131,7 +133,7 @@ export const privacyPage = {
     {
       id: 'international', title: 'International Transfers',
       blocks: [
-        'Some of our service providers, such as email and hosting providers, may store or process information outside the UK. Where this happens, we make sure appropriate safeguards are in place to protect your information, as required by UK data protection law.',
+        'Some of our service providers, such as our email, hosting and form delivery (FormSubmit) providers, may store or process information outside the UK. Where this happens, we make sure appropriate safeguards are in place to protect your information, as required by UK data protection law.',
       ],
     },
     {

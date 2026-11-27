@@ -1,7 +1,10 @@
 /* =========================================================
    Custom 3-step quote form (homepage hero + final CTA, Contact page).
-   Sends to our own PHP mailer: public/send-enquiry.php (the recipient
-   email address is set there, on the server – not in this code).
+   Sending:
+   1. FormSubmit (formsubmit.co) – a free email relay that Gmail trusts, so
+      enquiries reach the inbox without any mail server set-up on our side.
+   2. If FormSubmit can't be reached, our own PHP mailer (public/send-enquiry.php)
+      as a backup.
    ========================================================= */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { services } from '../data/site';
@@ -21,30 +24,71 @@ const errorFor = (name, value) => (rules[name] ? rules[name](value.trim()) : '')
 
 const empty = { service: '', name: '', phone: '', email: '', postcode: '', message: '' };
 
-// The mailer sits next to the site (e.g. /design/construction-uk/send-enquiry.php)
-const ENDPOINT = import.meta.env.BASE_URL + 'send-enquiry.php';
+/* Where enquiries are emailed (via FormSubmit).
+   TODO after activating: FormSubmit's confirmation email gives a random "form alias"
+   (e.g. 'a1b2c3d4…'). Put that here instead of the address so the address isn't
+   visible in the page code. Change it to the company inbox before launch. */
+const FORMSUBMIT_TO = 'devdeviser@gmail.com';
+const FORMSUBMIT_URL = `https://formsubmit.co/ajax/${FORMSUBMIT_TO}`;
+
+// Backup: our PHP mailer next to the site (e.g. /design/construction-uk/send-enquiry.php)
+const PHP_ENDPOINT = import.meta.env.BASE_URL + 'send-enquiry.php';
 const SEND_ERROR = "Sorry, we couldn't send your enquiry right now. Please try again or call us.";
 
-/* Send the enquiry. Throws an Error (with a message for the visitor) if it fails. */
-async function submitEnquiry(data) {
-  // `npm run dev` has no PHP, so pretend it worked there
-  if (import.meta.env.DEV) {
-    console.info('[dev] Enquiry not sent – the PHP mailer only runs on the live server.', data);
-    await new Promise((r) => setTimeout(r, prefersReducedMotion() ? 0 : 900));
-    return;
-  }
+const postJson = (url, body) => fetch(url, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+  body: JSON.stringify(body),
+});
+
+/* 1. FormSubmit – the field names below become the rows of the email table */
+async function sendViaFormSubmit(data) {
+  const res = await postJson(FORMSUBMIT_URL, {
+    Service: data.service,
+    Name: data.name,
+    Phone: data.phone,
+    Email: data.email,
+    Postcode: data.postcode || '–',
+    'Project Details': data.message || '–',
+    'Sent From': window.location.href,
+    _subject: `New quote request: ${data.service} – ${data.name}`,
+    _replyto: data.email,          // "Reply" in Gmail answers the customer
+    _template: 'table',
+    _captcha: 'false',
+  });
+  const json = await res.json();
+  if (String(json?.success) !== 'true') throw new Error(json?.message || 'FormSubmit did not accept the enquiry');
+}
+
+/* 2. Backup – our own PHP mailer */
+async function sendViaPhp(data) {
   let res, json = null;
   try {
-    res = await fetch(ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ ...data, page: window.location.href }),
-    });
+    res = await postJson(PHP_ENDPOINT, { ...data, page: window.location.href });
     json = await res.json();
   } catch {
     throw new Error(SEND_ERROR);   // offline, server down, or the server didn't run PHP
   }
   if (!res.ok || !json?.ok) throw new Error(json?.error || SEND_ERROR);
+}
+
+/* Send the enquiry. Throws an Error (with a message for the visitor) if it fails. */
+async function submitEnquiry(data) {
+  if (data.website) return;   // honeypot filled in – a bot; pretend it worked and send nothing
+
+  // `npm run dev`: don't send real emails while developing
+  if (import.meta.env.DEV) {
+    console.info('[dev] Enquiry not sent (emails are only sent from the live site).', data);
+    await new Promise((r) => setTimeout(r, prefersReducedMotion() ? 0 : 900));
+    return;
+  }
+
+  try {
+    await sendViaFormSubmit(data);
+  } catch (err) {
+    console.warn('FormSubmit failed – trying the backup mailer.', err);
+    await sendViaPhp(data);
+  }
 }
 
 export default function QuoteForm({ idPrefix, title, titleAs: Title = 'h2', className, formRef, ...rest }) {
