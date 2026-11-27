@@ -13,8 +13,10 @@ export default function Services() {
   // Gentle auto-advance until the visitor interacts
   useEffect(() => {
     if (prefersReducedMotion()) return;
+    // On small screens the panels stack vertically; auto-advancing would make the page jump
+    const stacked = window.matchMedia('(max-width: 900px)');
     const id = setInterval(() => {
-      if (!paused.current && Date.now() >= lockUntil.current) setActive((i) => (i + 1) % n);
+      if (!paused.current && !stacked.matches && Date.now() >= lockUntil.current) setActive((i) => (i + 1) % n);
     }, 4500);
     return () => clearInterval(id);
   }, [n, setActive, lockUntil]);

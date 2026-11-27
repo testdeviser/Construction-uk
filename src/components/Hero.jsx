@@ -56,7 +56,7 @@ export default function Hero() {
           <p className="eyebrow eyebrow--light reveal" style={{ '--d': 0 }}>Building. Renovating. Transforming.</p>
           <h1 className="hero__title">
             <span className="reveal-line"><span style={{ '--d': 1 }}>Transforming Houses</span></span>
-            <span className="reveal-line"><span style={{ '--d': 2 }}>Into Exceptional Homes</span></span>
+            <span className="reveal-line"><span style={{ '--d': 2 }}>Into Exceptional<br className="hero__br" /> Homes</span></span>
           </h1>
           <p className="hero__text reveal" style={{ '--d': 3 }}>From complete house rebuilds and renovations to roofing, kitchens, bathrooms and everyday property repairs, we provide building and home improvement solutions tailored to your property.</p>
           <div className="btn-group reveal" style={{ '--d': 4 }}>
